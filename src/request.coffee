@@ -112,8 +112,7 @@ sanitizeInput = (context, callback) ->
 escapeInput = (context, callback) ->
   driver = core.selectDriver context.connection  
   driverInstance = new driver.class()
-  driverInstance.escape?(context.templateContext)
-  console.log context
+  driverInstance.escape?(context.templateContext)  
   callback null, context 
 
 queryRequestHandler = (context) ->

@@ -5,11 +5,31 @@ log         = require 'simplog'
 _           = require 'lodash-contrib'
 
 class MSSQLDriver extends events.EventEmitter
-  constructor: (@query, @config) ->
+  constructor: (@query, @config, @context) ->
   
-  escape: (context) ->  
+  escape: (context) ->
+
     _.walk.preorder context, (value, key, parent) ->
-      parent[key] = value.replace(/'/g, "''") if _.isString(value)    
+      parent[key] = value.replace(/'/g, "''") if _.isString(value) 
+
+  parseQueryParameters: () ->    
+
+    lines = @query.match ///^--@.*$///mg    
+    log.info @context.templateContext
+    _.map lines, (line) =>
+      line = line.replace '--', ''
+      line = line.replace '=', ''
+
+      [varName,type,value] = line.split /\s+/
+      varName = varName.replace('@','')
+      type = type.replace /\(.*\)/
+
+      value = _.reduce value.split('.'), (doc,prop) ->
+        log.info doc, prop
+        doc[prop]
+      , @context.templateContext
+
+      { varName, type, value }
 
   execute: () =>
     @rowSetStarted = false
@@ -21,6 +41,7 @@ class MSSQLDriver extends events.EventEmitter
     conn.on 'errorMessage', (infoMessage) -> log.error "te %j", infoMessage
     conn.on 'connect', connect_deferred.makeNodeResolver()
     conn.on 'end', () => connect_end_deferred.resolve()
+    conn.on 'debug', (message) => log.info message
 
     connect_deferred.promise.then(
       () =>
@@ -51,7 +72,18 @@ class MSSQLDriver extends events.EventEmitter
         # what we want here, all that fancy parameterization and 'stuff' is
         # done
         # in the template
-        conn.execSqlBatch request,
+
+        parameters = @parseQueryParameters()
+        log.info 'parameters', parameters
+        unless _.isEmpty parameters
+          log.info 'Parameterizing query'
+          parameters.forEach (param) ->
+            log.info tedious.TYPES[param.type]
+            request.addParameter(param.varName, tedious.TYPES[param.type], parseInt(param.value || 0))
+          log.info request
+          return conn.execSql request          
+
+        conn.execSqlBatch request
       (error) =>
         log.error "connect failed %j", error
         this.emit 'error', error
