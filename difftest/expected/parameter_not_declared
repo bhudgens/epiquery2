@@ -1,0 +1,25 @@
+{
+  "events": [
+    {
+      "queryId": "1",
+      "message": "beginquery"
+    },
+    {
+      "message": "error",
+      "errorDetail": {
+        "message": "Must declare the scalar variable \"@myParam\".",
+        "code": "EREQUEST",
+        "number": 137,
+        "state": 2,
+        "class": 15,
+        "procName": "",
+        "lineNumber": 7
+      },
+      "error": "Must declare the scalar variable \"@myParam\"."
+    },
+    {
+      "queryId": "1",
+      "message": "endquery"
+    }
+  ]
+}

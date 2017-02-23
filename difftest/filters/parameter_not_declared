@@ -1,0 +1,1 @@
+cat | jq . | grep -v 'serverName": "WIN-'
