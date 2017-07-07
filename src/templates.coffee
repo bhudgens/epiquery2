@@ -42,11 +42,6 @@ renderers[".mustache"] = (templatePath, context, cb) ->
   log.debug "rendering #{templatePath} with mustache renderer"
   relativeTemplatePath = getRelativeTemplatePath(templatePath)
   template = hoganTemplates[relativeTemplatePath]
-
-  if not template
-    log.debug "Template not cached - loading on the fly #{relativeTemplatePath}"
-    template = hogan.compile(fs.readFileSync(relativeTemplatePath).toString())
-
   context = _.extend(context, mustacheLambdas)
   if template
     renderedTemplate = template.render(context, hoganTemplates)
