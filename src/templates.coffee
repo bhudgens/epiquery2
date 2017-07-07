@@ -1,12 +1,12 @@
-hogan = require 'hogan.js'
-dot = require 'dot'
-log = require 'simplog'
-fs = require 'fs'
-path = require 'path'
-_ = require 'lodash'
-config = require './config.coffee'
-util = require 'util'
-yaml = require 'js-yaml'
+hogan     = require 'hogan.js'
+dot       = require 'dot'
+log       = require 'simplog'
+fs        = require 'fs'
+path      = require 'path'
+_         = require 'lodash'
+config    = require './config.coffee'
+util      = require 'util'
+yaml      = require 'js-yaml'
 
 getRelativeTemplatePath = (templatePath) ->
   # as per the MDN
@@ -111,11 +111,7 @@ getMustacheFiles = (templateDirectory, fileList=[]) ->
   names = fs.readdirSync(templateDirectory)
   _.each names, (name) ->
     fullPath = path.join(templateDirectory, name)
-    try
-      stat = fs.statSync(fullPath)
-    catch error
-      return
-
+    stat = fs.statSync(fullPath)
     if stat.isDirectory()
       # never descend into a directory named git
       return if name is ".git"
@@ -138,14 +134,14 @@ initialize = () ->
   templates = {}
   # compile all of the templates
   _.each mustachePaths, (mustachePath) ->
-    try
-      # we're going to use a key relative to the root of our template directory, as it
-      # is epxected that the templates will be stored in their own repository and used
-      # anywhere, and we'll remove the leading / so it's clear that the path is relative
-      templates[getRelativeTemplatePath(mustachePath)] = hogan.compile(fs.readFileSync(mustachePath).toString())
-    catch e
-      log.error "error precompiling template #{mustachePath}, it will be skipped"
-      log.error e
+      try
+        # we're going to use a key relative to the root of our template directory, as it
+        # is epxected that the templates will be stored in their own repository and used
+        # anywhere, and we'll remove the leading / so it's clear that the path is relative
+        templates[getRelativeTemplatePath(mustachePath)] = hogan.compile(fs.readFileSync(mustachePath).toString())
+      catch e
+        log.error "error precompiling template #{mustachePath}, it will be skipped"
+        log.error e
   # swap in the newly loaded templates
   hoganTemplates = templates
   ############################################
