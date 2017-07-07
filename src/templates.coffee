@@ -102,7 +102,6 @@ parseFrontMatter = (templateString) ->
 
 
 getMustacheFiles = (templateDirectory, fileList=[]) ->
-  return fileList
   names = fs.readdirSync(templateDirectory)
   _.each names, (name) ->
     fullPath = path.join(templateDirectory, name)
