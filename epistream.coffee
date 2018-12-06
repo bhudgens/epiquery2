@@ -155,6 +155,6 @@ if config.isDevelopmentMode() and config.forks is 1
   log.warn "********************************************************************************"
   cluster = new Cluster(port: config.port, cluster:false, timeout:config.httpRequestTimeoutInSeconds * 1000)
 else
-  cluster = new Cluster(port: config.port, noWorkers:config.forks, timeout:config.httpRequestTimeoutInSeconds * 1000)
+  cluster = new Cluster(port: config.port, noWorkers:config.forks, timeout:config.httpRequestTimeoutInSeconds * 1000, connThreshold: 50000)
 
 cluster.listen (cb) -> cb(server)
