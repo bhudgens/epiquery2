@@ -99,7 +99,7 @@ socketServer.on 'connection', (conn) ->
     newrelic.startWebTransaction(message.templateName)
     if apiKey
       if !~ conn.url.indexOf apiKey
-        conn.close() 
+        conn.close()
         log.error "Unauthorized Socket Access Attempted from IP: #{conn.remoteAddress}"
         log.error "Unauthorized Context: #{JSON.stringify(message)}"
         newrelic.noticeError(new Error("Unauthorized Socket Access Attempted"), message)
@@ -148,13 +148,13 @@ prefix.prefix = "/#{apiKey}/sockjs" if apiKey && config.urlBasedApiKey
 
 socketServer.installHandlers(server, prefix)
 
-Cluster = require 'cluster2'
-if config.isDevelopmentMode() and config.forks is 1
-  log.warn  "********************************************************************************"
-  log.warn "epiquery is running in development mode with a single fork specified, this results in a single process epiquery which will BE SLOW"
-  log.warn "********************************************************************************"
-  cluster = new Cluster(port: config.port, cluster:false, timeout:config.httpRequestTimeoutInSeconds * 1000)
-else
-  cluster = new Cluster(port: config.port, noWorkers:config.forks, timeout:config.httpRequestTimeoutInSeconds * 1000, connThreshold: 50000)
-
-cluster.listen (cb) -> cb(server)
+# Cluster = require 'cluster2'
+# if config.isDevelopmentMode() and config.forks is 1
+#   log.warn  "********************************************************************************"
+#   log.warn "epiquery is running in development mode with a single fork specified, this results in a single process epiquery which will BE SLOW"
+#   log.warn "********************************************************************************"
+#   cluster = new Cluster(port: config.port, cluster:false, timeout:config.httpRequestTimeoutInSeconds * 1000)
+# else
+#   cluster = new Cluster(port: config.port, noWorkers:config.forks, timeout:config.httpRequestTimeoutInSeconds * 1000, connThreshold: 50000)
+#
+# cluster.listen (cb) -> cb(server)
